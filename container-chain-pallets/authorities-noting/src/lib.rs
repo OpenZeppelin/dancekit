@@ -28,6 +28,10 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#[doc(hidden)]
+extern crate alloc;
+
+use alloc::string::ToString;
 #[cfg(test)]
 mod mock;
 
@@ -59,7 +63,7 @@ use {
     frame_system::pallet_prelude::*,
     parity_scale_codec::{Decode, Encode},
     sp_inherents::{InherentIdentifier, IsFatalError},
-    sp_runtime::{traits::Hash as HashT, RuntimeString},
+    sp_runtime::traits::Hash as HashT,
     sp_std::prelude::*,
 };
 
@@ -279,9 +283,8 @@ pub mod pallet {
         fn is_inherent_required(_: &InherentData) -> Result<Option<Self::Error>, Self::Error> {
             // Return Ok(Some(_)) unconditionally because this inherent is required in every block
             Ok(Some(InherentError::Other(
-                sp_runtime::RuntimeString::Borrowed(
-                    "Orchestrator Authorities Noting Inherent required",
-                ),
+                alloc::borrow::Cow::Borrowed("Orchestrator Authorities Noting Inherent required")
+                    .to_string(),
             )))
         }
 
@@ -382,7 +385,7 @@ impl<T: Config> Pallet<T> {
 #[derive(Encode)]
 #[cfg_attr(feature = "std", derive(Debug, Decode))]
 pub enum InherentError {
-    Other(RuntimeString),
+    Other(alloc::string::String),
 }
 
 impl IsFatalError for InherentError {
