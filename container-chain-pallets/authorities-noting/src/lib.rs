@@ -31,6 +31,7 @@
 #[doc(hidden)]
 extern crate alloc;
 
+use alloc::string::ToString;
 #[cfg(test)]
 mod mock;
 
